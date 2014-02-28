@@ -1,0 +1,192 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                              Modified SRS Document for stage 1 submission
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	PROJECT  TOPIC  	:  IMAGE  PROCESSOR 
+
+	PROJECT  NAME		:  IMAGE  EDITOR  6.2	 
+
+	LAB  BATCH     		:  MONDAY  BATCH 
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 					                             IMAGE  EDITOR  6.2
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		 
+	 
+	PROBLEM  STATEMENT  :  TO FACILITATE OPENING OF A XPM IMAGE AND DEVELOP A GRAPHICAL USER INTERFACE FOR PERFORMING BASIC IMAGE EDITING OPERATIONS . 
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			                                      ALL  ABOUT  <  IMAGE  EDITOR  6.2  > 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		       
+
+	 
+
+	< IMAGE  EDITOR  6.2 >  is  a  basic  image  processor  that  allows  opening  any  image  stored  on  PC  in  xpm  format . It  uses  graphical  user  
+interface  to  interact  with user  and  allow  various  operations . The  image  is  opened  by  asking for the file name as input by the user.
+	  
+	 
+It  provides  following  image  editing  tools : 
+
+	 
+	 
+	1>	Brightness  Adjust 
+	 
+	2>	Contrast  Adjust 
+	 
+	3>	Zoom  Operation 
+	 
+	4>	Flip  Operation 
+	 
+	5>	Interconversion  (  Grayscale <---> Colured  ) 
+	 
+	6>	Rotation  of  Image 
+	 
+	7>	Crop  Operation 
+
+	8>	Extracting  Negative of a Image 
+	 
+
+It  allows  saving  of  the  image  after  editing  which  is  saved  by  the  name  " save.txt ";. 
+ 
+	 
+The  execution  of  programme  starts  with  the  popping  of  BROWSER  window  which  gives  following  options  to   the  user  : 
+	 
+	 
+
+	1>	To  open  an  image  for  editing 
+	 
+	2>	To  quit  the  application 
+
+	 
+
+BROWSER  window  has  two  different  buttons  clicking  on  any  of  which  by  the  user decides  which  of  the  above  mentioned  two  options  is  to  be  executed 
+If  the  user  clicks  on  QUIT  button  apllication  is  terminated  immediately  and  if  BROWSE  option  is  selected  user  is  asked  to  provide  with  the  file  name  in  which image  is  stored . The  user  is  supposed  to  provide  the  file  name  by  clicking  on  the  terminal  and  then  typing  the  complete  file  name  with  extension . After  the  file  name  is  enterd  another  window  IMAGE_EDITOR  pops  up  which  is  the  window  that  is  meant  entirely  for  opening  up  and  displaying  the  image . Along  with  this  another  window  TOOLBAR  opens  just  below  the  IMAGE_EDITOR  window  which  displays  various  operations  that  can  be  performed  on  the  imported  image . This  window  includes  buttons  for  all the  possible  operations  that can  be  performed  on  the  image . Additionally  it  also  has  options  for  saving  the  file  after  editing  which  can  now  be  saved  by  the  name  " save.XPM ". Image  file  is  opened  in  bitmap  format  on  the  user  interface  but  for  internal  operations  but  for  internal  operations  its  pixel  values   are  extracted  which  are  stored  in  the  hexadecimal  form  in  the  image  file . Therefore  when  users  chose  any  of  the  editing  options  on  the  interface  they  see  the  magic  of  image  editing  when  the  image  under  operation  gets  changed  entirely  but  internally  variation  it  is  the  mere  play  with  the  pixel  values  gives  desired  results  to  the  user . The  logic  is  to  do  calculated  alteration  on  the  pixel  values  of  the  image  so   as  to  make  any  editing  of  image  possible and  produce  the  results  desired  by  the  user. 
+
+Logic related to different functions included in the code :
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                             ZOOM  FUNCTION  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+It  provides  the  user  to  choose  between  1x , 2x  zoom.  1x  zoom  opens  the  image  in  its  true  size , 2x  doubles  its  length   and  width  thus  
+making  image	four  times  large .The  argument  of  the  index  of  the  zoom  is   given  by  an  appropriate  formula  which  operates  on  the  coordinate  of  the  mouse  click  position . This  is  just  to  make  our  code  compact  and  short  in  length . Internally  when  2x  zoom  is  selected   each  pixel  value   is  copied  to  its  appropriate  three  neighbouring  positions  so  that  size   of  a  image  is  increased   by  four  as  a  whole. 
+ 
+For  eg. 
+
+12 25		changes  to	12 12 25 25 
+25 28 				12 12 25 25 
+     				25 25 28 28 
+				25 25 28 28 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                              FLIP  FUNCTION   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It  provides  the  user  facility  to  create  mirror  image  of  the  image  that we  are  editing . The  logic  is  to  create  mirror  image  of  the  matrix  of  
+pixel  values  so  as  to  get  mirror  image  of   the  image  that   we   are  editing. Within  it  there  are  two  options  for  vertical   flip  as  well  as  horizontal  flip . Vertical  flip  creates  mirror  image  as  if  a  horizontal  mirror  is  kept  below  image . Horizontal  flip  creates mirror  image  as  if  vertical  mirror  is  kept  on  right  side  of  iamge . 
+ 
+For eg. 
+
+Horizontal  flip 
+
+12 25 36	changes  to	36 25 12 
+25 14 36                        36 14 25                  
+24 35 78			78 35 24 
+
+Vertical  flip 
+
+12 25 36	changes  to	24 35 78 
+25 14 36			25 14 36 
+24 35 78			12 25 36 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                       CONTRAST  FUNCTION  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+This  function  adjusts  the  contrast  of  the   image  . The  logic  of  adjusting  contrast  is  to  widen  the  range  over  which  pixel  values  of  the  image  range  so  as  to  make  each  color  of  the  image  distinct . After  this  the  pixel  values  are  adjusted  by  histogram  equalisation . This   gives  efficient  contrast  to  the  image. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                        BRIGHTNESS  FUNCTION   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This   functions  adjusts  the  brightness   of  the  image . The  logic  is   to  increase 
+the  the  each  pixel  value  of  the  image  by  a  certain   factor . 
+
+One  of  the  above  functions   i.e.  contrast  use  histogram  equaliser  which  adjusts  
+the  gradient  of  the   pixel  values  so  that  the  pixel  values   are  evenly  
+distributed  over  the  entire  range  of  pixel  values. 
+
+HISTOGRAM  EQUALISER 
+
+For eg. 
+ 
+12 25 36	changes  to	0   127  159	 
+25 14 39			127 31   191 
+17 58 41			63  255  223 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                              ROTATE  FUNCTION   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This  functon  rotates  the  image  clockwise  or  anticlockwise  by  an  angle  of 90  degrees  or   it  can  also  rotate  the  image  by  180  degrees.  internally 
+the  matrix  of  pixel  values  is  rotated  so  as  to  get  desired  result . 
+
+For eg. 
+
+90   degree  rotation 
+
+14 25 36	changes  to	19 28 14 19 
+28 58 36			32 65 58 25 
+14 65 72			27 72 36 36 
+19 32 27 
+
+180  degree  rotation 
+
+14 25 36	changes  to	27 32 19 
+28 58 36			72 65 14 
+14 65 72			36 58 28 
+19 32 27			36 25 14 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                          GRAYSCALE  TO  COLOURED  TRANSITION  AND  VICE  VERSA 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This  function  converts  a  coloured  image  to  a  grayscale  image  using  EZWINDOWS  facility . This  grayscale  image  is  stored   in  another  temporary  
+file . If  user  saves  this  file  then  it  is   saved  in  filename  provided. If  user  first  makes  transition  from  coloured  to  grayscale  and  again  wants 
+the  coloured  image  then  again  orignal  file  is  displayed  as  grayscale  image  was  stored  temporarily . However  there  is  no  means  to  convert  orignally 
+grayscale  image  to  a  coloured   image . 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                                CROP  FUNCTION 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This  function  removes  a  certain  portion  of  image  which  can  be  saved  or further  edited . User  is  asked  to   select  a  rectangular   region  which  is  required  in  the  image  and  the   rest  portion  is  removed . Internally  this  is  done  by  removing   pixel  values  from  the  pixel  matrix . 
+
+For eg. 
+
+14 25 36 69	can  be  cropped  to	14 25 36 
+14 25 78 95				14 25 78 
+35 95 26 72 
+17 95 62 46	or			26 72 
+					62 46 
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All  editing  inputs  from  the  user  will  be  captured  using  mouse  clicks. 
+Information  regarding  EZWINDOWS  is  retrieved  from  book  COHOON AND DAVIDSON. 
+But  the  functions  are  written  using  the  very  basic  logic. 
+
+
+Hope !  ALL  IZZ  WELL !! 
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+
+
+ 
+								 
+

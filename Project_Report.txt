@@ -1,0 +1,250 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                              PROJECT  REPORT  ON   IMAGE  EDITOR  6.2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              PROJECT TOPIC : Image processor
+
+               PROJECT NAME : Image Editor 6.2
+
+                  LAB BATCH : Monday Batch
+
+          INSTRUCTORS NAME : D. B. Phatak		   		   
+		   		   
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                           THE BEGINNING
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Image Editor 6.2 is finally ready to edit and process any XPM image. It was a difficult job to choose a topic for the project. Right from the beginning we had in our mind that we would be using EZ Windows to produce a GUI. So we came up with the ideas of either making a game or an image editor. We were told in lectures that image can be processed by merely playing with the pixel values. So we did the same modified the matrices and made a successful project. Now when our Image Editor 6.2 is working it provides all those and even more facilities which a basic image editor should provide.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                              BRIEF DESCRIPTION OF THE PROJECT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+One thing for which our group really feels proud is that before starting with the project all knowledge we had was just that image data is stored in the computer in form of pixel matrix. We learned how to extract this matrix , how to change it according to our needs , how to convert this changed matrix again into an image, etc.  
+
+Now coming upto how the image editor works...
+
+Image Editor 6.2 is run through the terminal using appropriate commands provided in the user manual. It starts with a Browser window which gives options for either browsing a image file to be edited or to quit. If the browse option is selected user is asked to give the file name by typing on the terminal and if quit is selected program terminates immediately. After file name is provided Image Editor and Toolbar window appears. Toolbar shows various optons to the user that can be performed on the image. User is supposed to select all the options by clicking on them. Toolbar window provides options for : Brightness adjust, Contrast adjust, Crop, Zoom ( 1x or 2x ), Rotate ( 90 degrees left or right or 180 degrees ), Flip ( vertical or horizantal ), Graysacle, Negative, Saving processed image and QUIT. Whenever user clicks on any of the provided option specified process is carried out on the image so as to produce desired result.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                       INTERNAL MECHANISM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+One of the most difficult task in our project was to extarct pixel matrix of an image..... 
+In the code two classes have been created namely palette and image. Image class is used to declare an image object which can now be dealt as a single object  thus preventing the job of accessing image pixel data again again and palette class is like a storage of color data for an object of image class. It is like a color dictionary which stores each color id and its equivalent value which is stored in the image in the form of hexa-decimal values. These hexa-decimal values are converted into normal integer or float values and stored in an object of a palette class which is one of the data member of image class.
+
+Declaration of palette class :
+
+class palette
+{
+     char id[5];
+     int value;
+     public:    
+     void define( char* , int);
+     int getval();
+     char* getid();
+     palette& operator=( const palette& that)    ----> defining = as operator for assigning objects of palette class
+     {
+     	value=that.value;
+	strcpy(id, that.id);
+     } 
+}; 
+
+Declaration of image class :
+
+class image
+{
+    int w, h, n, c;
+    palette* color;    ---->  object of class palette 
+    int** pixmpvl;     ---->  2D array for storing pixel values
+    char*** pixmpid;   ---->  2D string matrix for storing pixel ids
+    public:
+    image()            ---->  constuctor for initialising all objects of image class
+    {
+	w=h=n=0;
+	color=NULL;
+	pixmpvl=NULL;
+	pixmpid=NULL;
+    }
+    ~image()           ---->  destructor for deleting objects of image class and cleaning up memory
+    {
+	int i,j;
+	for( i=0; i<h; ++i)
+        {		
+		for( j=0; j<w; ++j)
+		delete[] pixmpid[i][j];
+		delete[] pixmpid[i];
+	}	
+	for( i=0; i<h; ++i)
+        {		 
+		delete[] pixmpvl[i];
+	} 
+	delete[] color;
+	delete[] pixmpid;
+	delete[] pixmpvl;	
+     }
+    void define(int, int, int, int, palette*, int**, char***);     ----> for defining various attributes of a new object of image class
+    int getw();
+    int geth();
+    int getn();
+    int getc();
+    palette* getcolor();
+    int** getpmvl(); 
+    char*** getpmid(); 
+    image& operator=( const image& that);     ----> defining = to be an operator for assigning image objects
+};
+			   
+Entire image data is stored using these two classes . These objects get there data by reading or writing the image file. Three image objects are maintained throughout the program . First to hold current image status. Second for special operations like zoom, brightness, contrast etc. Third which maintaines the original status of image. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Now looking at each function one by one....
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                           ZOOM FUNCTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Zoom as it seems is a pretty simple function. It simply copies pixel values of the image into a larger image object so that overall size of image increases. Internally zoom function first reads the pixel data from one image object and then copies them into other image object but difference comes when one pixel of first image is copied to four pixels in second image object. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                              FLIP  FUNCTION   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It  provides  the  user  facility  to  create  mirror  image  of  the  image  that we  are  editing . The  logic  is  to  create  mirror  image  of  the  matrix  of  
+pixel  values  so  as  to  get  mirror  image  of   the  image  that   we   are  editing. Within  it  there  are  two  options  for  vertical   flip  as  well  as  horizontal  flip . Vertical  flip  creates  mirror  image  as  if  a  horizontal  mirror  is  kept  below  image . Horizontal  flip  creates mirror  image  as  if  vertical  mirror  is  kept  on  right  side  of  iamge . 
+ 
+For eg. 
+
+Horizontal  flip 
+
+12 25 36	changes  to	36 25 12 
+25 14 36                        36 14 25                  
+24 35 78			78 35 24 
+
+Vertical  flip 
+
+12 25 36	changes  to	24 35 78 
+25 14 36			25 14 36 
+24 35 78			12 25 36 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                       CONTRAST  FUNCTION  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+This  function  adjusts  the  contrast  of  the   image  . The  logic  of  adjusting  contrast  is  to  widen  the  range  over  which  pixel  values  of  the  image  range  so  as  to  make  each  color  of  the  image  more  distinct . After  this  the  pixel  values  are  adjusted  by  histogram  equalisation . This   gives  efficient  contrast  to  the  image. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                        BRIGHTNESS  FUNCTION   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This   functions  adjusts  the  brightness   of  the  image . The  logic  is   to  increase  each  pixel  value  of  the  image  by  a  certain   factor . 
+
+One  of  the  above  functions   i.e.  contrast  use  histogram  equaliser  which  adjusts  
+the  gradient  of  the   pixel  values  so  that  the  pixel  values   are  evenly  
+distributed  over  the  entire  range  of  pixel  values. 
+
+HISTOGRAM  EQUALISER 
+
+For eg. 
+ 
+12 25 36	changes  to	0   127  159	 
+25 14 39			127 31   191 
+17 58 41			63  255  223 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                              ROTATE  FUNCTION   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This  functon  rotates  the  image  clockwise  or  anticlockwise  by  an  angle  of 90  degrees  or   it  can  also  rotate  the  image  by  180  degrees.  internally 
+the  matrix  of  pixel  values  is  rotated  so  as  to  get  desired  result . 
+
+For eg. 
+
+90   degree  rotation 
+
+14 25 36	changes  to	19 28 14 19 
+28 58 36			32 65 58 25 
+14 65 72			27 72 36 36 
+19 32 27 
+
+180  degree  rotation 
+
+14 25 36	changes  to	27 32 19 
+28 58 36			72 65 14 
+14 65 72			36 58 28 
+19 32 27			36 25 14 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                        CROP FUNCTION 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The crop funtion which we have included in our image editor is the only weak spot in our project. Though initially we thought to reduce the the pixel matrix as desired by the user but we faced a problem of accessing the correct location in pixel matrix by simply recording the mouse click on the window (EzWindow specifies coordinates in cm not in pixels). So we worked out an alternate function of crop which colours entire region of window other than the selected region . But its drawback is that cropped image can't be saved.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                          GRAYSCALE  TO  COLOURED  TRANSITION  AND  VICE  VERSA 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This function converts a colored image into a grayscale image. This is one of the special features of our image editor. Though this seems to be pretty tough function but it is merely application of a formula on pixel values and modifying them. 
+
+Conversion code used for grayscaling is :
+
+for( i=0; i<n; i++)
+{		
+	val=m.getcolor()[i].getval();
+	//gamma decoding
+	r=pow(val/(256*256),2.2);
+	g=pow(val/256-(val/(256*256))*256,2.2);
+	b=pow(val%256,2.2);
+	//changing color definition with gamma decoding
+	val=int(pow(.3*r+.59*g+.11*b,1/2.2));
+	val=val*256*256+val*256+val;				
+	color[i].define(m.getcolor()[i].getid(),val);
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                          NEGATIVE / POSITIVE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is one surprise feature of our image editor . We never thought of including this as one of the options but one of the team members came up with this idea and we worked upon that. This again is an application of simple formula on pixel values. From the previous statement it may seem that it would have been easy task to include this operation but the research work that was required to be done before the grayscale and negative function could be successful was really tideous and pain taking job. Our entire team spend nights browsing the web trying to understand how new features could be included. 
+
+Conversion code for generating negative of a image :
+  
+for( i=0; i<n; i++)
+{		
+	val=m.getcolor()[i].getval();
+	r=val/(256*256);
+	g=val/256-(val/(256*256))*256;
+	b=val%256;
+	r=255-r;
+	g=255-g;
+	b=255-b;
+	val=r*256*256+g*256+b;			
+	color[i].define(m.getcolor()[i].getid(), val);			
+}
+
+Both the grayscaling and negative function work perfectly and produce desired results that serve us our purpose...
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                             EZ WINDOWS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Now when we are done with individual function ...
+Lets have a look at ez windows part. Our entire graphical user interface is constructed using ez windows. User is required to give all the inputs through mouse clicks. The only input which is typed on the terminal is the file name. Earlier we had high expectations from ourselves and wanted to include some sort of browser function so that user does naot have to type the file name but can browse entire system for the image file. But this attempt was unsuccessful and we had to resort to basic input method. Despite limited colors available on ez windows we tried to make our user interface look as good as possible and we believe that we were successful in that because we get to recieve nice comments from other fellow students. In ezwindows we have used RectangleShape class, EllipseShape class, Position class, Bitmap class, SimpleWindow class etc. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                         IDEAS FOR FUTURE WORK
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We intended to make our Image Editor 6.2 to be comparable to any basic image editor that is available, actually we aimed to make a even better image editor than them , but our image editor despite all efforts has some weak spots. Though we completed the project in the way we had thought in the beginning but in course of making project we realised that we could have done much more improvements in it but due to lack of time and we could not....
+
+Some of these additional improvements which could have been applied on our project are :
+  
+  i> Using some kind of browser window so that user can surf the system and access any image stored on computer to edit.
+ ii> Finding a way to save the cropped image.
+iii> Retention of image clarity even on zooming upto higher levels.
+ iv> Making a better contrast function and supporting both color and lightness contrast.
+  v> Including a function for sharpness adjustment. 
+ vi> Also including a sketch function just like adobe photoshop.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
